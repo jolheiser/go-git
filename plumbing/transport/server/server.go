@@ -174,9 +174,12 @@ func (s *upSession) UploadPack(ctx context.Context, req *packp.UploadPackRequest
 		pw.CloseWithError(err)
 	}()
 
-	return packp.NewUploadPackResponseWithPackfile(req,
+	resp := packp.NewUploadPackResponseWithPackfile(req,
 		ioutil.NewContextReadCloser(ctx, pr),
-	), nil
+	)
+	resp.ACKs = objs[:1]
+
+	return resp, nil
 }
 
 func (s *upSession) objectsToUpload(req *packp.UploadPackRequest) ([]plumbing.Hash, error) {

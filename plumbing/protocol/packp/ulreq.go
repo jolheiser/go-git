@@ -15,8 +15,13 @@ import (
 type UploadRequest struct {
 	Capabilities *capability.List
 	Wants        []plumbing.Hash
+	haves        []plumbing.Hash
 	Shallows     []plumbing.Hash
 	Depth        Depth
+}
+
+func (req *UploadRequest) DecodeHaves() []plumbing.Hash {
+	return req.haves
 }
 
 // Depth values stores the desired depth of the requested packfile: see

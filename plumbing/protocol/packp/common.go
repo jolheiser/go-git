@@ -27,6 +27,7 @@ var (
 
 	// upload-request
 	want            = []byte("want ")
+	have            = []byte("have ")
 	shallow         = []byte("shallow ")
 	deepen          = []byte("deepen")
 	deepenCommits   = []byte("deepen ")

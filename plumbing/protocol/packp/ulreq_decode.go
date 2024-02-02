@@ -137,7 +137,7 @@ func (d *ulReqDecoder) decodeOtherWants() stateFn {
 	}
 
 	if len(d.line) == 0 {
-		return nil
+		return d.decodeHaves
 	}
 
 	if !bytes.HasPrefix(d.line, want) {
@@ -153,6 +153,31 @@ func (d *ulReqDecoder) decodeOtherWants() stateFn {
 	d.data.Wants = append(d.data.Wants, hash)
 
 	return d.decodeOtherWants
+}
+
+// Expected format: have <hash>
+func (d *ulReqDecoder) decodeHaves() stateFn {
+	if ok := d.nextLine(); !ok {
+		return nil
+	}
+
+	if len(d.line) == 0 {
+		return nil
+	}
+
+	if !bytes.HasPrefix(d.line, have) {
+		d.error("unexpected payload while expecting a have: %q", d.line)
+		return nil
+	}
+	d.line = bytes.TrimPrefix(d.line, have)
+
+	hash, ok := d.readHash()
+	if !ok {
+		return nil
+	}
+	d.data.haves = append(d.data.haves, hash)
+
+	return d.decodeHaves
 }
 
 // Expected format: shallow <hash>
